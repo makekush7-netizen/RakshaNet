@@ -1,0 +1,9 @@
+<resources>
+    <style name="Theme.RakshaNetMesh" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">#0F6E5C</item>
+        <item name="android:navigationBarColor">#EAF1F5</item>
+        <item name="android:statusBarColor">#EAF1F5</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>
