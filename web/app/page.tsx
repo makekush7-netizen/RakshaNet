@@ -30,7 +30,7 @@ export default function Home() {
       <header className="siteHeader">
         <a className="brand" href="#top" aria-label="RakshaNet home"><span className="shield">R</span><strong>RakshaNet</strong></a>
         <nav><a href="#how">How it works</a><a href="#simulator">Simulator</a><a href="#authority">For authorities</a></nav>
-        <a className="smallButton" href="/RakshaNet-v0.3-demo.apk" download>Download app</a>
+        <a className="smallButton" href="/RakshaNet-v0.3.1-ui-fix.apk" download>Download app</a>
       </header>
 
       <section className="hero" id="top">
@@ -38,8 +38,8 @@ export default function Home() {
           <div className="eyebrow">OFFLINE-FIRST COMMUNITY SAFETY</div>
           <h1>Connected when<br/>networks fail.</h1>
           <p>RakshaNet helps neighbourhoods prepare, share trusted updates and relay urgent messages across nearby Android phones—even when internet access disappears.</p>
-          <div className="heroActions"><a className="primaryButton" href="/RakshaNet-v0.3-demo.apk" download>Download Android app</a><a className="textLink" href="#simulator">Explore the demo →</a></div>
-          <div className="downloadMeta"><span>Android 8+</span><span>Demo v0.3</span><span>Offline lessons included</span></div>
+          <div className="heroActions"><a className="primaryButton" href="/RakshaNet-v0.3.1-ui-fix.apk" download>Download Android app</a><a className="textLink" href="#simulator">Explore the demo →</a></div>
+          <div className="downloadMeta"><span>Android 8+</span><span>Demo v0.3.1</span><span>Offline lessons included</span></div>
         </div>
         <div className="heroVisual">
           <img src="/images/flood-preparedness.jpg" alt="Neighbours preparing sandbags, water and a first aid kit before monsoon rain"/>

@@ -133,7 +133,7 @@ private fun CourseHero(onClick: () -> Unit) {
                 }
                 Text("Flood readiness", Modifier.padding(top = 10.dp), style = MaterialTheme.typography.titleLarge)
                 Text("Prepare early, move safely, verify updates, and help without taking unnecessary risks.", Modifier.padding(top = 5.dp), style = MaterialTheme.typography.bodyMedium)
-                Button(onClick = onClick, Modifier.fillMaxWidth().padding(top = 12.dp)) { Text("Continue journey"); Spacer(Modifier.weight(1f)); Icon(Icons.Outlined.ChevronRight, null) }
+                Button(onClick = onClick, Modifier.fillMaxWidth().padding(top = 12.dp)) { Text("Continue journey", color = Color.White); Spacer(Modifier.weight(1f)); Icon(Icons.Outlined.ChevronRight, null) }
             }
         }
     }
@@ -191,7 +191,7 @@ private fun LessonScreen(index: Int, eyebrow: String, title: String, body: Strin
                 Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.Center) { Text(body, style = MaterialTheme.typography.bodyLarge); Surface(Modifier.padding(top = 18.dp), shape = RoundedCornerShape(14.dp), color = MintSoft) { Text("Try this: explain the step to someone at home in one sentence.", Modifier.padding(12.dp), style = MaterialTheme.typography.bodyMedium) } }
             }
             Text("Source: NDRF / NDMA / WHO flood safety guidance", style = MaterialTheme.typography.labelSmall)
-            Button(onClick = onContinue, Modifier.fillMaxWidth().padding(top = 10.dp)) { Text(if (page == pageCount) "Complete lesson" else "Continue") }
+            Button(onClick = onContinue, Modifier.fillMaxWidth().padding(top = 10.dp)) { Text(if (page == pageCount) "Complete lesson" else "Continue", color = Color.White) }
         }
     }
 }
@@ -212,7 +212,7 @@ private fun QuizScreen(number: Int, count: Int, prompt: String, choices: List<St
         }
         if (selected != null) {
             Surface(Modifier.fillMaxWidth().padding(top = 16.dp), shape = RoundedCornerShape(18.dp), color = if (selected == correctIndex) MintSoft else Color(0xFFFFF5CF)) { Text(explanation, Modifier.padding(15.dp), style = MaterialTheme.typography.bodyMedium) }
-            Spacer(Modifier.weight(1f)); Button(onClick = onNext, Modifier.fillMaxWidth()) { Text(if (number == count) "See result" else "Next challenge") }
+            Spacer(Modifier.weight(1f)); Button(onClick = onNext, Modifier.fillMaxWidth()) { Text(if (number == count) "See result" else "Next challenge", color = Color.White) }
         }
     }
 }
@@ -224,6 +224,6 @@ private fun ResultScreen(score: Int, total: Int, onDone: () -> Unit) {
         Text("Flood ready", Modifier.padding(top = 20.dp), style = MaterialTheme.typography.headlineLarge)
         Text("$score of $total correct", Modifier.padding(top = 8.dp), style = MaterialTheme.typography.titleLarge, color = RakshaGreenDark)
         Text("Your progress is saved on this phone and stays available offline.", Modifier.padding(top = 10.dp), style = MaterialTheme.typography.bodyMedium)
-        Button(onClick = onDone, Modifier.fillMaxWidth().padding(top = 26.dp)) { Text("Back to learning path") }
+        Button(onClick = onDone, Modifier.fillMaxWidth().padding(top = 26.dp)) { Text("Back to learning path", color = Color.White) }
     }
 }

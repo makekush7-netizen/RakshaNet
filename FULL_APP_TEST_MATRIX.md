@@ -17,6 +17,9 @@ flow has not been implemented or tested; the user will perform device/UI checks.
 | V07 | Release | Versioned APK downloads from website with matching hash | PARTIAL | Site deployment contains the exact 20,829,692-byte APK matching local SHA-256 `D6305...58F1`; user download/install pending. |
 | V08 | Android V2 | Approved navigation/theme/screens compile | PASS | `:app:assembleDebug` passed on 2026-08-17; no device/UI claim. |
 | V09 | Learning | Flood journey plus Earthquake/Cyclone previews compile | PARTIAL | Four lessons, five questions, generated imagery and Coming soon cards compile; user device review pending. |
+| V10 | Android V2 | Chat, lesson flow and quiz manual review | PASS | User reports all three work correctly on Redmi Note 10 Pro and Galaxy J8 and supplied screenshots on 2026-08-17. |
+| V11 | Android V2 | Dark action-button labels remain readable | PARTIAL | Screenshots reproduced invisible labels; explicit white labels applied and APK assembles. Corrected APK still needs user visual confirmation. |
+| V12 | Web release | Standard Next.js production build for Vercel | PASS | `web/npm run build` passed with Next.js 16.2.6 on 2026-08-17. Public deployment/link verification remains pending. |
 
 | ID | Area | Test | Status | Evidence / next requirement |
 |---|---|---|---|---|

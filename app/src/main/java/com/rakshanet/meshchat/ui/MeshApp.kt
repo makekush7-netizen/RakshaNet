@@ -119,7 +119,7 @@ fun MeshApp(
                 Column(Modifier.padding(14.dp)) {
                     Text("Verify ${request.endpointName} once", fontWeight = FontWeight.Bold)
                     Text("Match code ${request.authenticationDigits} on both phones.", style = MaterialTheme.typography.bodyMedium)
-                    Row { Button(onClick = onAcceptConnection) { Text("Codes match") }; TextButton(onClick = onRejectConnection) { Text("Reject") } }
+                    Row { Button(onClick = onAcceptConnection) { Text("Codes match", color = androidx.compose.ui.graphics.Color.White) }; TextButton(onClick = onRejectConnection) { Text("Reject") } }
                 }
             }
         }
@@ -163,7 +163,7 @@ fun MeshApp(
         onDismissRequest = { showClearDialog = false },
         title = { Text("Clear local history?") },
         text = { Text("This removes visible messages from this phone only.") },
-        confirmButton = { Button(onClick = { onClearChat(); showClearDialog = false }) { Text("Clear") } },
+        confirmButton = { Button(onClick = { onClearChat(); showClearDialog = false }) { Text("Clear", color = androidx.compose.ui.graphics.Color.White) } },
         dismissButton = { TextButton(onClick = { showClearDialog = false }) { Text("Cancel") } },
     )
 }

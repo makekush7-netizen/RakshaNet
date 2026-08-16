@@ -178,7 +178,7 @@ private fun ActiveIncidentHero(onOpenCommunity: () -> Unit) {
             Column(Modifier.padding(17.dp)) {
                 Text("Flood guidance received", style = MaterialTheme.typography.titleLarge)
                 Text("Open the community room for the latest trusted update and nearby reports.", Modifier.padding(top = 5.dp), style = MaterialTheme.typography.bodyMedium)
-                Button(onClick = onOpenCommunity, Modifier.fillMaxWidth().padding(top = 12.dp)) { Text("Open live situation") }
+                Button(onClick = onOpenCommunity, Modifier.fillMaxWidth().padding(top = 12.dp)) { Text("Open live situation", color = Color.White) }
             }
         }
     }

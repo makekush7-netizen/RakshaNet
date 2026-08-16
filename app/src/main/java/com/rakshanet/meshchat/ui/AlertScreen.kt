@@ -168,7 +168,7 @@ fun AlertScreen(coordinator: MeshCoordinator) {
                                 }
                             },
                             modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
-                        ) { Text("Update active SOS") }
+                        ) { Text("Update active SOS", color = androidx.compose.ui.graphics.Color.White) }
                     }
                 }
             }

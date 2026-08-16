@@ -408,3 +408,10 @@ Last updated: 2026-08-17
   modern Android. This is broader than current generic Android guidance but is
   required by the actual supported device/library combination. A permanent
   setup failure no longer produces an endless 4/2-second retry loop.
+
+## 2026-08-17 — Public demo hosting uses Vercel
+
+- The repository's `web/` app is the public landing page and APK distribution surface.
+- Vercel replaces the earlier private ChatGPT/Sites preview configuration.
+- Production deploys are sourced from the original GitHub repository; `web/` is the Vercel root directory.
+- The authority console remains an explicitly labelled, non-operational hackathon mock.

@@ -90,8 +90,21 @@ Last updated: 2026-08-17
 
 ## Immediate next action
 
-User installs `RakshaNet-v0.3-demo-debug.apk` and performs the visual/navigation
-review on Redmi and Galaxy J8: Home imagery and network sheet, Community send,
-the full Flood lesson/quiz journey, Coming soon course cards, and Alerts/SOS.
-Report screenshots or exact issues; do not repeat automated device operation for
-purely visual checks.
+Deploy the production-built `web/` project from GitHub to Vercel with the
+repository root configured as `web/`, then verify the public APK link downloads
+the exact v0.3.1 artifact.
+
+## 2026-08-17 device review and public-release pass
+
+- User reports chat, lesson flow, and quiz work correctly on the Redmi Note 10
+  Pro and Galaxy J8.
+- Screenshots exposed invisible labels on dark Material buttons. Explicit white
+  label colors were applied to every affected dark action button; the corrected
+  Android APK assembles successfully. Device confirmation of the visual repair
+  is still pending.
+- Corrected artifact: `artifacts/RakshaNet-v0.3.1-ui-fix-debug.apk`, 21,027,103
+  bytes, SHA-256
+  `D95DCD6C6EF5994F8006C3D941EEF93EE23D50C502398207F6CD59A145446A58`.
+- The website was converted from the private Sites/vinext configuration to a
+  standard Next.js 16.2.6 Vercel build. `npm run build` passes.
+- Website download buttons now serve `RakshaNet-v0.3.1-ui-fix.apk`.

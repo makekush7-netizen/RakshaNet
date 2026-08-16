@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -135,7 +136,7 @@ fun RakshaNetApp(
                 Button(
                     onClick = { if (selectedMode == TransportMode.NEARBY) onUseMock() else onUseNearby() },
                     modifier = Modifier.weight(1f),
-                ) { Text(if (selectedMode == TransportMode.NEARBY) "Leave network" else "Join network") }
+                ) { Text(if (selectedMode == TransportMode.NEARBY) "Leave network" else "Join network", color = Color.White) }
             }
             TextButton(onClick = { if (currentServiceStatus.startsWith("Background relay active")) onStopRelay() else onStartRelay() }) {
                 Text(if (currentServiceStatus.startsWith("Background relay active")) "Stop background relay" else "Start background relay")
@@ -148,7 +149,7 @@ fun RakshaNetApp(
         icon = { Icon(Icons.Outlined.Person, null) },
         title = { Text("Local profile") },
         text = { OutlinedTextField(proposedName, { proposedName = it.take(32) }, label = { Text("Name shown nearby") }, singleLine = true) },
-        confirmButton = { Button(onClick = { onRenameDevice(proposedName); showProfile = false }, enabled = proposedName.trim().isNotEmpty()) { Text("Save locally") } },
+        confirmButton = { Button(onClick = { onRenameDevice(proposedName); showProfile = false }, enabled = proposedName.trim().isNotEmpty()) { Text("Save locally", color = Color.White) } },
         dismissButton = { TextButton(onClick = { showProfile = false }) { Text("Cancel") } },
     )
 }
