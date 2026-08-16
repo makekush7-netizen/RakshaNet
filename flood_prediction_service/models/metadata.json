@@ -1,0 +1,76 @@
+{
+  "model_version": "4.0.0",
+  "training_date": "2026-08-17 00:19:56",
+  "dataset_name": "IMD Kerala Historical Flood Dataset (kerala.csv)",
+  "dataset_source": "https://raw.githubusercontent.com/amandp13/Flood-Prediction-Model/master/kerala.csv",
+  "total_observations": 118,
+  "temporal_splits": {
+    "train": "1901 - 1982 (82 samples)",
+    "validation": "1983 - 1999 (17 samples)",
+    "test": "2000 - 2018 (19 samples)"
+  },
+  "feature_cols": [
+    "annual_rainfall_mm",
+    "monsoon_rainfall_mm",
+    "pre_monsoon_mm",
+    "peak_month_rainfall_mm",
+    "monsoon_ratio",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP"
+  ],
+  "target_name": "FLOODS (YES=1, NO=0)",
+  "classes": [
+    0,
+    1
+  ],
+  "optimal_threshold": 0.6,
+  "brier_score": 0.0364,
+  "metrics": {
+    "accuracy": 0.9474,
+    "precision": 0.8889,
+    "recall": 1.0,
+    "f1_score": 0.9412,
+    "roc_auc": 1.0,
+    "pr_auc": 1.0,
+    "brier_score": 0.0364,
+    "confusion_matrix": [
+      [
+        10,
+        1
+      ],
+      [
+        0,
+        8
+      ]
+    ]
+  },
+  "sanity_results": [
+    {
+      "rainfall_mm": 1200,
+      "flood_probability": 0.041,
+      "risk_tier": "LOW"
+    },
+    {
+      "rainfall_mm": 1800,
+      "flood_probability": 0.0396,
+      "risk_tier": "LOW"
+    },
+    {
+      "rainfall_mm": 2400,
+      "flood_probability": 0.0757,
+      "risk_tier": "LOW"
+    },
+    {
+      "rainfall_mm": 3000,
+      "flood_probability": 0.8857,
+      "risk_tier": "SEVERE"
+    },
+    {
+      "rainfall_mm": 3600,
+      "flood_probability": 0.9529,
+      "risk_tier": "SEVERE"
+    }
+  ]
+}
