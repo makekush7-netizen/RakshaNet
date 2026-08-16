@@ -1,62 +1,86 @@
-# RakshaNet Full App Execution Plan
+# RakshaNet V2 Execution Plan
 
-Last updated: 2026-08-16
+Last updated: 2026-08-17
 
-## Locked product choices
+The earlier B–G implementation remains a useful functional baseline, but its
+screen flow and styling were rejected. V2 redesigns the product around
+`PRODUCT_BLUEPRINT_V2.md` while preserving the verified mesh core.
 
-- Four bottom tabs: Home, Courses, Connect, Alerts.
-- “Map” is an offline mesh-topology view; no online map tiles or geocoding.
-- SOS broadcasts a generic signed alert immediately. Category/note/location are
-  optional refinements referencing the original alert.
-- Raw GPS coordinates are explicit opt-in and never reverse-geocoded.
-- Flood integration uses a fake/disabled adapter until the retrained endpoint is
-  supplied and verified. No accuracy claim is embedded in the app.
+## Workstream 0 — Protect and integrate the repository
 
-## Phase A — Repository and regression baseline
+1. Commit the two current connected-status mesh fixes and decision record.
+2. Integrate fetched remote commit `5d531fc` without overwriting local work.
+3. Run the narrow merge/build checks once; no physical UI loop.
+4. Mechanically organize the model under `services/flood-model/` in a separate
+   commit after the integration is stable.
 
-Import the verified mesh source and preserve all PRDs/contracts/history. Exit:
-the existing 30 JVM tests, debug APK, and lint pass in this repository.
+Exit: one clean branch contains Android plus the teammate's exact ML work, with
+history preserved and no unresolved changes.
 
-## Phase B — Design system, shell, Home
+## Workstream 1 — V2 design contract before app code
 
-Build reusable navy/teal/emergency tokens, typography/shapes, four-tab shell,
-Home dashboard cards, live mesh status, and profile/settings entry. Exit:
-build/lint plus navigation/state verification.
+1. Produce four high-fidelity screen specifications: Prepared Home, Active
+   Incident Home, Community incident room, and Learn journey.
+2. Define component inventory, spacing/type scale, icon family, image aspect
+   ratios, empty/loading/error states, and exact copy.
+3. Generate only two or three restrained flood content assets after the native
+   composition is approved.
+4. User approves the direction from static previews before Compose changes.
 
-## Phase C — Connect restyle and receipts
+Exit: approved light visual direction with no ambiguous screen flow.
 
-Restyle chat without routing changes. Add Community Sent/Delivered/Seen only
-when the corresponding evidence exists. Exit: automated mesh suite and physical
-Community/private regression remain green.
+## Workstream 2 — Demo infrastructure
 
-## Phase D — Courses
+1. Add versioned JSON contracts.
+2. Build control-plane incident/event/report endpoints with idempotent storage.
+3. Deploy the existing flood service and verify its real `/predict` contract.
+4. Build the website landing/download page and labelled simulator/authority UI.
+5. Add deterministic analysis fallback, then optional structured LLM adapter.
 
-Build the course tree, bundled Flood Readiness lessons and quiz, Room-backed
-progress, and locked Earthquake/Storm/Ambassador nodes. Exit: progress survives
-restart and quiz completion behaves correctly.
+Exit: browser-only drill can be started, reports added, analysis drafted, and an
+authority message approved without Android.
 
-## Phase E — Alerts/SOS
+## Workstream 3 — Android gateway vertical slice
 
-Add signed SOS alert/update packets, immediate generic broadcast, optional
-category/note/voice/raw-coordinate refinement, and incoming/outgoing alert feed.
-Exit: protocol tests and three-phone physical relay/display.
+1. Add verified cloud envelopes and a durable sequence cursor.
+2. Poll while online; persist before injecting an event into `MeshCoordinator`.
+3. Upload structured field reports idempotently when a gateway is available.
+4. Continue offline on cloud failure and sync later.
 
-## Phase F — Topology
+Exit: local automated contract tests pass, followed by one user-run two-phone
+test proving website → online Redmi → offline Samsung → report return.
 
-Show known/connected peers, observed hop hints, and health. Do not claim best
-routing without measurements. Exit: controlled three-phone topology evidence.
+## Workstream 4 — V2 Android experience
 
-## Phase G — Flood gateway
+Implement in demo-value order:
 
-Add typed `/predict` contract, fake implementation, risk-transition dedup,
-reviewed templates, and signed guidance packets. Real HTTP stays disabled until
-endpoint confirmation. Exit: fake LOW→SEVERE creates exactly one broadcast.
+1. Theme tokens and shared components.
+2. Prepared/active Home modes and network-health sheet.
+3. Community incident room and structured update composer.
+4. Authority bulletin and Alerts/SOS refinement.
+5. Learn journey with richer flood chapters and sourced content.
+6. First-run identity/community/readiness flow.
 
-## Phase H — Hardening/release
+Exit: user performs visual and interaction review on Redmi and Galaxy J8. The
+agent only runs narrow compile/unit checks needed to hand over an installable
+APK; it does not repeatedly operate the phones for cosmetic verification.
 
-Add durable outbox/process-death recovery, onboarding, OEM battery guidance,
-accessibility, release configuration, and privacy copy. Exit: full suite,
-three-device regression, true bridge test, 30-minute background test, signed APK.
+## Workstream 5 — Demo rehearsal and release
 
-No phase passes from file presence. Record automated and physical evidence in
-the full-app progress and test matrix.
+1. Build a versioned APK and publish its hash/QR on `/download`.
+2. Execute `DEMO_RUNBOOK.md` once live, fix only observed blockers, and record a
+   backup video.
+3. Run the narrow safety regression: Community, private, SOS, screen-off relay,
+   cloud-to-mesh, mesh-to-cloud.
+4. Clearly mark all physical and untested claims in the matrices.
+
+Exit: reproducible three-minute demonstration and a downloadable APK.
+
+## Deferred production work
+
+- Authority credential issuance/key rotation.
+- Global public membership and abuse controls.
+- Best-path routing and dense-network measurements.
+- Production database/observability/SLA work.
+- Real-time multi-station hydrological forecasting.
+- End-to-end private-message confidentiality.

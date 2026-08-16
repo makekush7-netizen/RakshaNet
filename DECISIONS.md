@@ -2,6 +2,55 @@
 
 Last updated: 2026-08-17
 
+## D-030: Flood inference is decision support, not a broadcast authority
+
+- **Status:** Accepted
+- **Choice:** Deploy the flood model as an independent service called by the
+  control plane. Its output may create a draft incident recommendation, but a
+  human authority must approve any public guidance broadcast.
+- **Why:** The fetched model is based on 118 annual Kerala observations and is
+  suitable for a labelled historical-risk demonstration, not autonomous
+  intraday emergency decisions.
+- **Consequence:** Android never calls the model directly. The demo labels its
+  inputs simulated and does not claim live-sensor forecasting.
+
+## D-029: AI situation analysis is a sourced, human-reviewed draft
+
+- **Status:** Accepted
+- **Choice:** AI analysis returns a structured draft containing confirmed
+  facts, needs, contradictions, unverified claims, and source report IDs. It
+  cannot directly emit an authority broadcast.
+- **Why:** Summarization is useful under information overload, but field chat is
+  incomplete and may contain mistakes or abuse.
+- **Consequence:** The authority console always exposes the underlying reports
+  and requires review/edit/approve. A deterministic fallback supports the demo
+  if an LLM service is unavailable.
+
+## D-028: Demo cloud sync uses durable cursor polling
+
+- **Status:** Accepted for the hackathon vertical slice
+- **Choice:** An online Android gateway polls ordered, signed cloud events using
+  a durable sequence cursor and uploads idempotent mesh reports. WebSockets are
+  deferred until the slice is stable.
+- **Why:** Cursor polling recovers predictably from app backgrounding, mobile
+  network changes, service restarts, and demo-host reconnects.
+- **Consequence:** Typical cloud-to-mesh latency is 3–5 seconds rather than
+  instantaneous. Events and uploads need stable UUIDs and idempotent endpoints.
+
+## D-027: V2 is situation-led; mesh is infrastructure
+
+- **Status:** Accepted
+- **Choice:** Primary navigation is Home, Community, Learn, and Alerts. Remove
+  Connect as a primary destination and expose network health through a compact
+  header control and diagnostics sheet. Home switches between preparedness and
+  active-incident modes.
+- **Why:** Users need to prepare, understand an incident, communicate, and ask
+  for help; transport terminology is not a user goal and made the earlier app
+  feel like a prototype.
+- **Consequence:** Existing mesh/community/private behavior is retained behind
+  new domain screens. `PRODUCT_BLUEPRINT_V2.md` supersedes the prior PRD's UI
+  flow and visual direction while leaving the verified core architecture intact.
+
 ## D-025: Receipt state and durable resend are evidence-backed
 
 - **Status:** Accepted; automated verification passed, physical verification pending
@@ -16,6 +65,20 @@ Last updated: 2026-08-17
 - **Consequence:** Community `Seen` means at least one peer, never the entire
   changing group. Private delivery still requires its intended recipient's
   signed ACK. Physical process-kill and three-phone receipt tests remain gates.
+
+## D-026: Connected links remain authoritative over setup failures
+
+- **Status:** Accepted after two-phone physical test
+- **Choice:** If Nearby reports a discovery/advertising setup error while at
+  least one endpoint remains connected, keep the user-facing connected-peer
+  status and log the setup error for diagnostics. Show `Setup required` only
+  when there is no usable connection.
+- **Why:** Redmi continued exchanging Community, private, ACK, SOS, and SOS
+  update packets while a later discovery window returned Location error 8034.
+  The error affects adding peers, not the established encrypted link.
+- **Consequence:** The UI no longer claims the mesh is unavailable while data
+  is demonstrably flowing. A missing permission still blocks initial join and
+  is still surfaced when zero peers are connected.
 
 ## D-022: Emergency traffic uses structured signed packet types
 
@@ -55,7 +118,8 @@ Last updated: 2026-08-17
 
 ## D-018: Full-app navigation and topology interpretation
 
-- **Status:** Accepted
+- **Status:** Superseded by D-027 for navigation; topology interpretation remains
+  accepted
 - **Choice:** Use Home, Courses, Connect, and Alerts bottom tabs. Interpret Map
   as an offline mesh-topology view, not geographic tiles.
 - **Why:** It remains useful offline and exposes real mesh state without an

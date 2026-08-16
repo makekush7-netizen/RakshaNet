@@ -4,6 +4,22 @@ Last updated: 2026-08-17
 
 ## Current state
 
+- The previous screen flow and visual direction have been rejected; no further
+  UI implementation should extend them.
+- V2 product, architecture, repository, cloud gateway, authority, AI-review,
+  and demo flows are now specified in `PRODUCT_BLUEPRINT_V2.md`,
+  `SYSTEM_ARCHITECTURE_V2.md`, and `DEMO_RUNBOOK.md`.
+- V2 primary navigation is Home, Community, Learn, and Alerts. Mesh status moves
+  to a global health control instead of a primary Connect tab.
+- Remote `origin/main` was fetched through commit `5d531fc`. It adds a complete
+  `flood_prediction_service/` with FastAPI, Docker, a model artifact, simulated
+  feed, audit/model documentation, and tests. It has not been merged because
+  two local connected-status fixes are intentionally preserved.
+- The fetched model uses 118 annual Kerala observations. Its actual `/predict`
+  contract requires `rainfall_mm` and returns probability, threshold, risk tier,
+  recommendation, and optional alert ID. It will be presented as labelled
+  historical-risk decision support, not real-time forecasting.
+
 - Empty GitHub repository cloned to the requested `raksha net` folder.
 - Verified mesh working tree imported with protocol v2, Room, foreground-service
   runtime, recovery, private/community UI, tests, and research.
@@ -55,6 +71,6 @@ Last updated: 2026-08-17
 
 ## Immediate next action
 
-Install the new APK on all three phones and execute F01-F11 plus the process-kill
-resend test. Then perform the true out-of-range bridge and 30-minute screen-off
-gates before producing a release-signed APK.
+Review and approve the V2 product/visual flow. Then commit the current mesh fix,
+integrate the teammate's fetched ML service, and create static native-style
+screen previews before changing Compose UI.

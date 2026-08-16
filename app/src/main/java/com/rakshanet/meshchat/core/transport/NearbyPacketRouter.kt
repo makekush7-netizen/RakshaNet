@@ -490,6 +490,15 @@ class NearbyPacketRouter(
             else -> null
         }
         if (setupMessage != null) {
+            // A connected encrypted endpoint remains usable even if a later
+            // discovery window is rejected by an OEM/Play Services permission
+            // check. Discovery affects adding peers; it must not falsely label
+            // an existing working link as disconnected.
+            if (connectedEndpoints.isNotEmpty()) {
+                _status.value = connectedStatus()
+                Log.w(TAG, "$operation unavailable while connected: $setupMessage ($statusCode)", error)
+                return
+            }
             recoveryJob?.cancel()
             recoveryJob = null
             releaseRecoveryCpu()
