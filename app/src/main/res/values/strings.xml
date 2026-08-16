@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">RakshaNet</string>
+    <string name="mesh_notification_channel">Mesh relay status</string>
+    <string name="mesh_notification_channel_description">Shows when offline mesh relay is active.</string>
+    <string name="mesh_notification_title">RakshaNet relay active</string>
+    <string name="mesh_notification_text">Offline mesh is staying ready in the background.</string>
+</resources>
