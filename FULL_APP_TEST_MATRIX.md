@@ -9,12 +9,14 @@ flow has not been implemented or tested; the user will perform device/UI checks.
 |---|---|---|---|---|
 | V00 | Planning | V2 product and architecture are internally specified | PASS | `PRODUCT_BLUEPRINT_V2.md`, `SYSTEM_ARCHITECTURE_V2.md`, and `DEMO_RUNBOOK.md` created 2026-08-17. |
 | V01 | Repository | Local mesh fix and fetched ML history integrated cleanly | NOT RUN | Fetch only; merge intentionally deferred until local fix is committed. |
-| V02 | Design | Four native-style screen previews approved | NOT RUN | User visual approval before Compose implementation. |
-| V03 | Control plane | Browser drill/report/analysis/approve flow | NOT RUN | Implement after repository integration. |
+| V02 | Design | Four native-style screen previews approved | PASS | User approved the generated mobile and website direction on 2026-08-17. |
+| V03 | Control plane | Browser drill/report/analysis/approve flow | PARTIAL | Static interactive prototype builds and is privately published; real incident/AI/authority operations are intentionally disabled and disclosed. |
 | V04 | Gateway | Website event reaches offline phone through online phone | NOT RUN | User physical two-phone test. |
 | V05 | Gateway | Offline field report returns to authority website | NOT RUN | User physical two-phone test. |
 | V06 | Safety | Every simulated incident surface says DRILL | NOT RUN | Website, payload, notification, Home, Community, Alerts. |
-| V07 | Release | Versioned APK downloads from website with matching hash | NOT RUN | Deployment gate. |
+| V07 | Release | Versioned APK downloads from website with matching hash | PARTIAL | Site deployment contains the exact 20,829,692-byte APK matching local SHA-256 `D6305...58F1`; user download/install pending. |
+| V08 | Android V2 | Approved navigation/theme/screens compile | PASS | `:app:assembleDebug` passed on 2026-08-17; no device/UI claim. |
+| V09 | Learning | Flood journey plus Earthquake/Cyclone previews compile | PARTIAL | Four lessons, five questions, generated imagery and Coming soon cards compile; user device review pending. |
 
 | ID | Area | Test | Status | Evidence / next requirement |
 |---|---|---|---|---|

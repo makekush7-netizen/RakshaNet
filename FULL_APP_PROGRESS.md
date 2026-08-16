@@ -4,6 +4,25 @@ Last updated: 2026-08-17
 
 ## Current state
 
+- V2 Android UI is implemented in the approved light direction: Home,
+  Community, Learn, and Alerts, with mesh diagnostics moved out of primary
+  navigation. The existing mesh coordinator/transport protocol was preserved.
+- Four original project-bound images were generated and optimized: flood
+  preparedness, active flood response, earthquake safety, and cyclone
+  preparation. Flood imagery is used in playable screens; Earthquake and
+  Cyclone are polished `Coming soon` course previews.
+- Flood Readiness now contains four lessons and five scenario questions. The
+  course journey, lesson cards, feedback, source notes, progress persistence,
+  and Ambassador preview are visually reworked.
+- Website mock is implemented and privately published at
+  `https://rakshanet-demo.makewatch7.chatgpt.site`. It includes the real APK
+  download, interactive simulated risk selection, an authority-room preview,
+  and prominent disclosure that privileged publishing/AI/cloud bridging is not
+  yet operational.
+- Android version is `0.3.0-demo`. `:app:assembleDebug` passed on 2026-08-17.
+  Artifact: `artifacts/RakshaNet-v0.3-demo-debug.apk`, 20,829,692 bytes,
+  SHA-256 `D6305AEEDA525ADFB46181CEE11B7694DCD31692CE6439BEE67335C95B3C58F1`.
+
 - The previous screen flow and visual direction have been rejected; no further
   UI implementation should extend them.
 - V2 product, architecture, repository, cloud gateway, authority, AI-review,
@@ -71,6 +90,8 @@ Last updated: 2026-08-17
 
 ## Immediate next action
 
-Review and approve the V2 product/visual flow. Then commit the current mesh fix,
-integrate the teammate's fetched ML service, and create static native-style
-screen previews before changing Compose UI.
+User installs `RakshaNet-v0.3-demo-debug.apk` and performs the visual/navigation
+review on Redmi and Galaxy J8: Home imagery and network sheet, Community send,
+the full Flood lesson/quiz journey, Coming soon course cards, and Alerts/SOS.
+Report screenshots or exact issues; do not repeat automated device operation for
+purely visual checks.

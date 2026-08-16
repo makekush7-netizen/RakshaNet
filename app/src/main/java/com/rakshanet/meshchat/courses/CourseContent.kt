@@ -29,7 +29,7 @@ object CourseCatalog {
     val floodReadiness = CourseModule(
         id = "flood-readiness",
         title = "Flood Readiness",
-        description = "Prepare early, move safely, and avoid the most dangerous flood mistakes.",
+        description = "Build practical skills before the rain, while water rises, and when neighbours need support.",
         lessons = listOf(
             Lesson(
                 id = "flood-readiness.prepare",
@@ -51,6 +51,26 @@ object CourseCatalog {
                     "Switch off electricity only if you can reach the main switch without entering water. Keep away from fallen wires and report them when communication is available.",
                 ),
             ),
+            Lesson(
+                id = "flood-readiness.signals",
+                title = "Read warnings without panic",
+                eyebrow = "Lesson 3 · Trusted information",
+                pages = listOf(
+                    "Check the source before forwarding a warning. Prefer signed authority guidance, known ambassadors, and reports that name a place and time.",
+                    "A photo or message may be old, incomplete, or from another location. Ask what was observed, where it happened, and when it was seen.",
+                    "Share short factual updates: water depth using a familiar object, blocked routes, urgent needs, and whether the report is first-hand or repeated.",
+                ),
+            ),
+            Lesson(
+                id = "flood-readiness.community",
+                title = "Help without becoming a victim",
+                eyebrow = "Lesson 4 · Community response",
+                pages = listOf(
+                    "Check on children, older adults, people with disabilities, and neighbours who may need medicines or transport—but do not enter moving water to reach them.",
+                    "Offer specific help: a dry charging point, drinking water, a safe room, transport on a verified route, or relaying a message through RakshaNet.",
+                    "Keep emergency access clear. Record what has already been requested or delivered so limited supplies reach the people who still need them.",
+                ),
+            ),
         ),
         quiz = listOf(
             QuizQuestion(
@@ -70,6 +90,18 @@ object CourseCatalog {
                 listOf("Only after water enters the house", "Early, after a credible warning", "After phone batteries are empty"),
                 1,
                 "Moving early keeps safer routes available and avoids panic in fast-changing conditions.",
+            ),
+            QuizQuestion(
+                "Which community update is most useful?",
+                listOf("Flood everywhere!", "School Road blocked near the bridge at 10:40", "Forward this quickly"),
+                1,
+                "A useful report says what was observed, where it happened, and when it was seen.",
+            ),
+            QuizQuestion(
+                "What help should you avoid offering?",
+                listOf("Charging a neighbour's phone", "Entering moving water without training", "Sharing a verified safe route"),
+                1,
+                "Helping should not create another person who needs rescue. Never enter moving floodwater without trained support.",
             ),
         ),
     )

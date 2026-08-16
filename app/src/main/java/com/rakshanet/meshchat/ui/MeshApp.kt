@@ -9,13 +9,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.outlined.Campaign
+import androidx.compose.material.icons.outlined.DeleteOutline
+import androidx.compose.material.icons.outlined.Groups
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -40,10 +48,12 @@ import com.rakshanet.meshchat.core.store.DeliveryState
 import com.rakshanet.meshchat.core.store.StoredMessage
 import com.rakshanet.meshchat.core.transport.PendingConnection
 import com.rakshanet.meshchat.core.transport.TransportMode
-import com.rakshanet.meshchat.ui.theme.AppBackground
-import com.rakshanet.meshchat.ui.theme.ConnectTint
-import com.rakshanet.meshchat.ui.theme.CourseTint
-import com.rakshanet.meshchat.ui.theme.Navy
+import com.rakshanet.meshchat.ui.theme.CardBorder
+import com.rakshanet.meshchat.ui.theme.Ink
+import com.rakshanet.meshchat.ui.theme.Mint
+import com.rakshanet.meshchat.ui.theme.MintSoft
+import com.rakshanet.meshchat.ui.theme.MutedInk
+import com.rakshanet.meshchat.ui.theme.RakshaGreenDark
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.text.DateFormat
@@ -69,18 +79,11 @@ fun MeshApp(
 ) {
     val allMessages by coordinator.messages.collectAsStateWithLifecycle(emptyList())
     val peers by coordinator.peers.collectAsStateWithLifecycle(emptyList())
-    val currentDeviceName by deviceName.collectAsStateWithLifecycle()
-    val status by coordinator.status.collectAsStateWithLifecycle("Mesh ready")
-    val relayStatus by serviceStatus.collectAsStateWithLifecycle()
-    val selectedMode by transportMode.collectAsStateWithLifecycle()
-    val nearbyState by nearbyStatus.collectAsStateWithLifecycle()
     val connectionRequest by pendingConnection.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     var selectedRecipientId by remember { mutableStateOf<String?>(null) }
     var draft by remember { mutableStateOf("") }
-    var showRenameDialog by remember { mutableStateOf(false) }
     var showClearDialog by remember { mutableStateOf(false) }
-    var proposedName by remember(currentDeviceName) { mutableStateOf(currentDeviceName) }
     val selectedPeer = peers.firstOrNull { it.peerId == selectedRecipientId }
     val visibleMessages = allMessages.filter { message ->
         if (selectedRecipientId == null) {
@@ -92,98 +95,69 @@ fun MeshApp(
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize().background(AppBackground).padding(horizontal = 16.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text("Connect", modifier = Modifier.padding(top = 12.dp), style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold)
-                        Text("Offline community and private mesh", style = MaterialTheme.typography.bodyMedium)
-                    }
-                    TextButton(onClick = { showRenameDialog = true }) { Text(currentDeviceName) }
-                }
-                Spacer(Modifier.height(6.dp))
-                Surface(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), color = ConnectTint) {
-                    Text(status, modifier = Modifier.padding(10.dp), style = MaterialTheme.typography.bodySmall)
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(relayStatus, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodySmall)
-                    if (relayStatus.startsWith("Background relay active")) TextButton(onClick = onStopRelay) { Text("Stop relay") }
-                    else TextButton(onClick = onStartRelay) { Text("Start relay") }
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(nearbyState, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodySmall)
-                    if (selectedMode == TransportMode.NEARBY) TextButton(onClick = onUseMock) { Text("Leave") }
-                    else TextButton(onClick = onUseNearby) { Text("Join network") }
-                }
-                connectionRequest?.let { request ->
-                    Surface(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(18.dp), color = CourseTint) {
-                    Column(modifier = Modifier.padding(12.dp)) {
-                        Text("Verify ${request.endpointName} once", fontWeight = FontWeight.Bold)
-                        Text("Matching code on both phones: ${request.authenticationDigits}")
-                        Text("After this, this identity reconnects automatically.", style = MaterialTheme.typography.labelSmall)
-                        Row {
-                            Button(onClick = onAcceptConnection) { Text("Codes match") }
-                            TextButton(onClick = onRejectConnection) { Text("Reject") }
-                        }
-                    }
-                    }
-                }
-                if (selectedMode == TransportMode.MOCK) TextButton(onClick = onInjectDebugMessage) { Text("Simulate incoming") }
+    Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(horizontal = 16.dp)) {
+        Row(Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text(if (selectedPeer == null) "Community" else selectedPeer.displayName, style = MaterialTheme.typography.headlineMedium)
+                Text(if (selectedPeer == null) "Nearby updates that keep moving offline" else "Private nearby conversation", style = MaterialTheme.typography.bodyMedium)
+            }
+            IconButton(onClick = { showClearDialog = true }, enabled = visibleMessages.isNotEmpty()) { Icon(Icons.Outlined.DeleteOutline, "Clear local history") }
+        }
 
-                Text("Send to", fontWeight = FontWeight.SemiBold)
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
-                    item {
-                        Button(onClick = { selectedRecipientId = null }, enabled = selectedRecipientId != null) {
-                            Text("Community")
-                        }
-                    }
-                    items(peers, key = { it.peerId }) { peer ->
-                        Button(onClick = { selectedRecipientId = peer.peerId }, enabled = selectedRecipientId != peer.peerId) {
-                            Text(peer.displayName)
-                        }
-                    }
+        Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp), color = MintSoft, border = androidx.compose.foundation.BorderStroke(1.dp, Mint)) {
+            Row(Modifier.padding(13.dp), verticalAlignment = Alignment.Top) {
+                Icon(Icons.Outlined.Campaign, null, tint = RakshaGreenDark)
+                Column(Modifier.padding(start = 10.dp)) {
+                    Text("Official channel preview", style = MaterialTheme.typography.labelLarge, color = RakshaGreenDark)
+                    Text("Verified authorities will soon be able to publish signed guidance here. This access is not enabled in the current build.", style = MaterialTheme.typography.bodySmall)
                 }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        selectedPeer?.let { "Private · ${it.displayName}" } ?: "Community broadcast",
-                        modifier = Modifier.weight(1f),
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                    TextButton(onClick = { showClearDialog = true }, enabled = allMessages.isNotEmpty()) { Text("Clear") }
+            }
+        }
+
+        connectionRequest?.let { request ->
+            Surface(Modifier.fillMaxWidth().padding(top = 10.dp), shape = RoundedCornerShape(18.dp), color = Color.White, border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder)) {
+                Column(Modifier.padding(14.dp)) {
+                    Text("Verify ${request.endpointName} once", fontWeight = FontWeight.Bold)
+                    Text("Match code ${request.authenticationDigits} on both phones.", style = MaterialTheme.typography.bodyMedium)
+                    Row { Button(onClick = onAcceptConnection) { Text("Codes match") }; TextButton(onClick = onRejectConnection) { Text("Reject") } }
                 }
-                LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(7.dp)) {
-                    items(visibleMessages, key = { it.packet.body.id }) { message ->
-                        MessageBubble(message) { coordinator.acknowledgeDisplayed(message.packet) }
-                    }
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    OutlinedTextField(
-                        value = draft,
-                        onValueChange = { draft = it },
-                        modifier = Modifier.weight(1f),
-                        label = { Text(if (selectedPeer == null) "Message community" else "Message ${selectedPeer.displayName}") },
-                        singleLine = true,
-                    )
-                    Spacer(Modifier.height(1.dp).padding(horizontal = 4.dp))
-                    Button(
-                        onClick = {
-                            val text = draft
-                            scope.launch {
-                                if (coordinator.sendText(text, selectedRecipientId).isSuccess) draft = ""
-                            }
-                        },
-                        enabled = draft.isNotBlank(),
-                        colors = ButtonDefaults.buttonColors(),
-                    ) { Text("Send") }
-                }
+            }
+        }
+
+        LazyRow(Modifier.fillMaxWidth().padding(vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(7.dp)) {
+            item { FilterChip(selected = selectedRecipientId == null, onClick = { selectedRecipientId = null }, leadingIcon = { Icon(Icons.Outlined.Groups, null) }, label = { Text("Community") }) }
+            items(peers, key = { it.peerId }) { peer ->
+                FilterChip(selected = selectedRecipientId == peer.peerId, onClick = { selectedRecipientId = peer.peerId }, leadingIcon = { Icon(Icons.Outlined.Lock, null) }, label = { Text(peer.displayName) })
+            }
+        }
+
+        if (visibleMessages.isEmpty()) {
+            Column(Modifier.weight(1f).fillMaxWidth(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                Icon(if (selectedPeer == null) Icons.Outlined.Groups else Icons.Outlined.Lock, null, tint = Mint, modifier = Modifier.padding(8.dp))
+                Text(if (selectedPeer == null) "No community updates yet" else "Start a private conversation", style = MaterialTheme.typography.titleMedium)
+                Text("Messages are stored locally and relay when peers are available.", Modifier.padding(top = 4.dp), style = MaterialTheme.typography.bodySmall)
+            }
+        } else {
+            LazyColumn(Modifier.weight(1f).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(9.dp)) {
+                items(visibleMessages, key = { it.packet.body.id }) { message -> CommunityMessageCard(message) { coordinator.acknowledgeDisplayed(message.packet) } }
+            }
+        }
+
+        Row(Modifier.fillMaxWidth().padding(vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+            OutlinedTextField(
+                value = draft,
+                onValueChange = { draft = it.take(1000) },
+                modifier = Modifier.weight(1f),
+                placeholder = { Text(if (selectedPeer == null) "Share a field update" else "Message ${selectedPeer.displayName}") },
+                maxLines = 3,
+                shape = RoundedCornerShape(18.dp),
+            )
+            IconButton(
+                onClick = { val text = draft; scope.launch { if (coordinator.sendText(text, selectedRecipientId).isSuccess) draft = "" } },
+                enabled = draft.isNotBlank(),
+            ) { Icon(Icons.Filled.Send, "Send", tint = if (draft.isNotBlank()) RakshaGreenDark else MutedInk) }
+        }
     }
-
-    if (showRenameDialog) AlertDialog(
-        onDismissRequest = { showRenameDialog = false },
-        title = { Text("Name this device") },
-        text = { OutlinedTextField(proposedName, { proposedName = it }, label = { Text("Device name") }, singleLine = true) },
-        confirmButton = { Button(onClick = { onRenameDevice(proposedName); showRenameDialog = false }, enabled = proposedName.trim().isNotEmpty()) { Text("Save") } },
-        dismissButton = { TextButton(onClick = { showRenameDialog = false }) { Text("Cancel") } },
-    )
 
     if (showClearDialog) AlertDialog(
         onDismissRequest = { showClearDialog = false },
@@ -195,31 +169,33 @@ fun MeshApp(
 }
 
 @Composable
-private fun MessageBubble(message: StoredMessage, onDisplayed: suspend () -> Unit) {
+private fun CommunityMessageCard(message: StoredMessage, onDisplayed: suspend () -> Unit) {
     val body = message.packet.body
-    val color = if (message.isLocal) Color(0xFFD9E9F7) else Color.White
     LaunchedEffect(body.id) { onDisplayed() }
-    Row(
+    Surface(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = if (message.isLocal) Arrangement.End else Arrangement.Start,
+        shape = RoundedCornerShape(20.dp),
+        color = if (message.isLocal) MintSoft else Color.White,
+        border = androidx.compose.foundation.BorderStroke(1.dp, if (message.isLocal) Mint else CardBorder),
     ) {
-    Surface(modifier = Modifier.fillMaxWidth(0.88f), shape = RoundedCornerShape(18.dp), color = color, tonalElevation = 1.dp) {
-    Column(modifier = Modifier.padding(12.dp)) {
-        Text(if (message.isLocal) "You" else body.senderName, fontWeight = FontWeight.SemiBold)
-        Text(body.payload)
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(DateFormat.getTimeInstance(DateFormat.SHORT).format(Date(message.receivedAtMs)), style = MaterialTheme.typography.labelSmall)
-            val state = when {
-                !message.isLocal -> "received"
-                body.recipientId == null && message.deliveryState == DeliveryState.SEEN -> "Sent · Delivered · Seen"
-                body.recipientId == null && message.deliveryState == DeliveryState.DELIVERED -> "Sent · Delivered"
-                body.recipientId == null -> "Sent"
-                message.deliveryState == DeliveryState.DELIVERED -> "✓✓ delivered"
-                else -> "✓ queued"
+        Column(Modifier.padding(14.dp)) {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Surface(shape = RoundedCornerShape(50), color = if (message.isLocal) Mint else Color(0xFFFFF5CF)) {
+                    Text(if (message.isLocal) "YOU" else "COMMUNITY", Modifier.padding(horizontal = 8.dp, vertical = 4.dp), style = MaterialTheme.typography.labelSmall, color = if (message.isLocal) RakshaGreenDark else Ink)
+                }
+                Text(if (message.isLocal) "You" else body.senderName, Modifier.padding(start = 8.dp).weight(1f), style = MaterialTheme.typography.titleMedium)
+                Text(DateFormat.getTimeInstance(DateFormat.SHORT).format(Date(message.receivedAtMs)), style = MaterialTheme.typography.labelSmall)
             }
-            Text(state, style = MaterialTheme.typography.labelSmall)
+            Text(body.payload, Modifier.padding(top = 10.dp), style = MaterialTheme.typography.bodyLarge)
+            val state = when {
+                !message.isLocal -> "Received nearby"
+                body.recipientId == null && message.deliveryState == DeliveryState.SEEN -> "Stored · Delivered · Seen"
+                body.recipientId == null && message.deliveryState == DeliveryState.DELIVERED -> "Stored · Delivered"
+                body.recipientId == null -> "Stored locally"
+                message.deliveryState == DeliveryState.DELIVERED -> "Delivered privately"
+                else -> "Queued privately"
+            }
+            Text(state, Modifier.fillMaxWidth().padding(top = 9.dp), style = MaterialTheme.typography.labelSmall, color = MutedInk)
         }
-    }
-    }
     }
 }

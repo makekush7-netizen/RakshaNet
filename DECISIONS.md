@@ -2,6 +2,20 @@
 
 Last updated: 2026-08-17
 
+## D-031: Authority website ships as an explicitly non-operational prototype
+
+- **Status:** Accepted for the hackathon build
+- **Choice:** Publish a polished download, simulator, and authority-room UI, but
+  keep incident creation, AI analysis, and official broadcasting non-operational.
+  Every privileged action explains that verified authority access is coming
+  later and no packet is emitted.
+- **Why:** The interface communicates the end-to-end product vision without
+  pretending that authentication, control-plane safety, or cloud-to-mesh
+  delivery has been completed under the deadline.
+- **Consequence:** Judges can explore the proposed workflow and download the
+  real Android APK. The current website must be described as a prototype; V04
+  and V05 remain untested future integration gates.
+
 ## D-030: Flood inference is decision support, not a broadcast authority
 
 - **Status:** Accepted
