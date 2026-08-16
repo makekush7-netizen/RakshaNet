@@ -14,12 +14,12 @@ flow has not been implemented or tested; the user will perform device/UI checks.
 | V04 | Gateway | Website event reaches offline phone through online phone | NOT RUN | User physical two-phone test. |
 | V05 | Gateway | Offline field report returns to authority website | NOT RUN | User physical two-phone test. |
 | V06 | Safety | Every simulated incident surface says DRILL | NOT RUN | Website, payload, notification, Home, Community, Alerts. |
-| V07 | Release | Versioned APK downloads from website with matching hash | PARTIAL | Site deployment contains the exact 20,829,692-byte APK matching local SHA-256 `D6305...58F1`; user download/install pending. |
+| V07 | Release | Versioned APK downloads from website | PASS | Public Vercel URL returned HTTP 200, `application/vnd.android.package-archive`, and exact local size 21,027,103 bytes for v0.3.1 on 2026-08-17. Local SHA-256 is `D95DCD6C6EF5994F8006C3D941EEF93EE23D50C502398207F6CD59A145446A58`. |
 | V08 | Android V2 | Approved navigation/theme/screens compile | PASS | `:app:assembleDebug` passed on 2026-08-17; no device/UI claim. |
 | V09 | Learning | Flood journey plus Earthquake/Cyclone previews compile | PARTIAL | Four lessons, five questions, generated imagery and Coming soon cards compile; user device review pending. |
 | V10 | Android V2 | Chat, lesson flow and quiz manual review | PASS | User reports all three work correctly on Redmi Note 10 Pro and Galaxy J8 and supplied screenshots on 2026-08-17. |
 | V11 | Android V2 | Dark action-button labels remain readable | PARTIAL | Screenshots reproduced invisible labels; explicit white labels applied and APK assembles. Corrected APK still needs user visual confirmation. |
-| V12 | Web release | Standard Next.js production build for Vercel | PASS | `web/npm run build` passed with Next.js 16.2.6 on 2026-08-17. Public deployment/link verification remains pending. |
+| V12 | Web release | Git-connected Vercel production deployment | PASS | GitHub `main` deploys from root `web/`; deployment `dpl_7EBBVtv5HH18vkNxuL8GF8RTgHKQ` is READY at `https://rakshanet-gamma.vercel.app`. Homepage and APK route verified; first-hour runtime error scan clean. |
 
 | ID | Area | Test | Status | Evidence / next requirement |
 |---|---|---|---|---|

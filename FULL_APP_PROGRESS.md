@@ -90,9 +90,8 @@ Last updated: 2026-08-17
 
 ## Immediate next action
 
-Deploy the production-built `web/` project from GitHub to Vercel with the
-repository root configured as `web/`, then verify the public APK link downloads
-the exact v0.3.1 artifact.
+Install the public v0.3.1 APK on the two phones and visually confirm that labels
+are readable on the dark action buttons. Do not rerun unrelated mesh tests.
 
 ## 2026-08-17 device review and public-release pass
 
@@ -108,3 +107,10 @@ the exact v0.3.1 artifact.
 - The website was converted from the private Sites/vinext configuration to a
   standard Next.js 16.2.6 Vercel build. `npm run build` passes.
 - Website download buttons now serve `RakshaNet-v0.3.1-ui-fix.apk`.
+- Git-connected Vercel project `rakshanet` is deployed to production from
+  `makekush7-netizen/RakshaNet`, branch `main`, root directory `web/`.
+- Production URL: `https://rakshanet-gamma.vercel.app`.
+- Vercel deployment `dpl_7EBBVtv5HH18vkNxuL8GF8RTgHKQ` reached `READY` on
+  commit `0e2313b`; the homepage rendered successfully and the public APK URL
+  returned HTTP 200, Android package content type, and the exact local size of
+  21,027,103 bytes. No runtime errors were reported in the first-hour scan.
