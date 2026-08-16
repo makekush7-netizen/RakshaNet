@@ -18,3 +18,10 @@ and [FULL_APP_PROGRESS.md](FULL_APP_PROGRESS.md).
 
 Real Nearby/background/SOS device tests require physical Android phones; see
 [DEVICE_TEST_GUIDE.md](DEVICE_TEST_GUIDE.md).
+
+## Flood Prediction Service
+
+The ML Flood Prediction Service is located in [`flood_prediction_service/`](./flood_prediction_service).
+It provides a FastAPI service and simulation script (`simulate_feed.py`) to stream flood risk predictions (`LOW`, `MODERATE`, `SEVERE`) to the mesh network.
+For service setup, training scripts, API specifications, and deployment guides, see [`flood_prediction_service/README.md`](./flood_prediction_service/README.md).
+
