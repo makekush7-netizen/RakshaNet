@@ -1,0 +1,26 @@
+{
+  "expected_features": [
+    "annual_rainfall_mm",
+    "monsoon_rainfall_mm",
+    "pre_monsoon_mm",
+    "peak_month_rainfall_mm",
+    "monsoon_ratio",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP"
+  ],
+  "feature_count": 9,
+  "target": "FLOODS",
+  "classes": [
+    0,
+    1
+  ],
+  "primary_input": "annual_rainfall_mm",
+  "optional_monthly_inputs": [
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP"
+  ]
+}
