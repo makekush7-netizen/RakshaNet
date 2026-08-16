@@ -14,6 +14,8 @@ import com.rakshanet.meshchat.core.store.InMemoryMeshStore
 import com.rakshanet.meshchat.core.transport.MockPacketRouter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -42,10 +44,13 @@ class MeshCoordinatorTest {
         val packet = PacketAuthenticator.create(body, 3, remoteSigner)
         coordinator.handleIncoming(InboundPacket(packet, "peer-a"))
         coordinator.handleIncoming(InboundPacket(packet, "peer-a"))
+        coordinator.acknowledgeDisplayed(packet)
+        coordinator.acknowledgeDisplayed(packet)
 
         assertEquals(1, store.messages.first().size)
-        assertEquals(1, router.sentHistory().size)
-        assertEquals(2, router.sentHistory().single().packet.remainingTtl)
+        assertEquals(2, router.sentHistory().size)
+        assertEquals(1, router.sentHistory().count { it.packet.body.type == PacketType.DELIVERY_ACK })
+        assertEquals(2, router.sentHistory().single { it.packet.body.type == PacketType.TEXT_MESSAGE }.packet.remainingTtl)
     }
 
     @Test fun `private packet only displays on intended recipient and emits ack`() = runTest {
@@ -112,6 +117,57 @@ class MeshCoordinatorTest {
         val coordinator = coordinator(router, store, EphemeralPacketSigner.create())
         assertTrue(coordinator.sendText("hello mesh").isSuccess)
         assertEquals("hello mesh", router.sentHistory().single().packet.body.payload)
+    }
+
+    @Test fun `transport handoff marks local community message delivered`() = runTest {
+        thisScope = this
+        val router = MockPacketRouter()
+        val store = InMemoryMeshStore()
+        val coordinator = coordinator(router, store, EphemeralPacketSigner.create())
+        coordinator.start()
+        runCurrent()
+        val sent = coordinator.sendText("hello mesh").getOrThrow()
+
+        router.confirmDelivery(sent.body.id)
+        advanceUntilIdle()
+
+        assertEquals(DeliveryState.DELIVERED, store.messages.first().single().deliveryState)
+        coordinator.stop()
+    }
+
+    @Test fun `signed community seen ack marks local message seen`() = runTest {
+        thisScope = this
+        val router = MockPacketRouter()
+        val store = InMemoryMeshStore()
+        val localSigner = EphemeralPacketSigner.create()
+        val coordinator = coordinator(router, store, localSigner)
+        val sent = coordinator.sendText("hello mesh").getOrThrow()
+        val remoteSigner = EphemeralPacketSigner.create()
+        val ackBody = PacketBody(
+            id = UUID.randomUUID().toString(), type = PacketType.DELIVERY_ACK,
+            senderId = PacketAuthenticator.senderId(remoteSigner.encodedPublicKey), senderName = "Remote",
+            recipientId = coordinator.localId, channelId = PacketRules.DIRECT_CHANNEL,
+            referencePacketId = sent.body.id, payload = "seen", timestampMs = 11L,
+        )
+
+        coordinator.handleIncoming(InboundPacket(PacketAuthenticator.create(ackBody, 3, remoteSigner), "peer-a"))
+
+        assertEquals(DeliveryState.SEEN, store.messages.first().single().deliveryState)
+    }
+
+    @Test fun `start resends locally queued packet from durable store`() = runTest {
+        thisScope = this
+        val store = InMemoryMeshStore()
+        val signer = EphemeralPacketSigner.create()
+        coordinator(MockPacketRouter(), store, signer).sendText("survive restart").getOrThrow()
+        val restartedRouter = MockPacketRouter()
+        val restarted = coordinator(restartedRouter, store, signer)
+
+        restarted.start()
+        advanceUntilIdle()
+
+        assertEquals("survive restart", restartedRouter.sentHistory().single().packet.body.payload)
+        restarted.stop()
     }
 
     @Test fun `SOS is signed stored in alert feed and offered to mesh`() = runTest {

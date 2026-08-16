@@ -22,6 +22,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -150,7 +151,9 @@ fun MeshApp(
                     TextButton(onClick = { showClearDialog = true }, enabled = allMessages.isNotEmpty()) { Text("Clear") }
                 }
                 LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(7.dp)) {
-                    items(visibleMessages, key = { it.packet.body.id }) { MessageBubble(it) }
+                    items(visibleMessages, key = { it.packet.body.id }) { message ->
+                        MessageBubble(message) { coordinator.acknowledgeDisplayed(message.packet) }
+                    }
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     OutlinedTextField(
@@ -192,9 +195,10 @@ fun MeshApp(
 }
 
 @Composable
-private fun MessageBubble(message: StoredMessage) {
+private fun MessageBubble(message: StoredMessage, onDisplayed: suspend () -> Unit) {
     val body = message.packet.body
     val color = if (message.isLocal) Color(0xFFD9E9F7) else Color.White
+    LaunchedEffect(body.id) { onDisplayed() }
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = if (message.isLocal) Arrangement.End else Arrangement.Start,
@@ -207,7 +211,9 @@ private fun MessageBubble(message: StoredMessage) {
             Text(DateFormat.getTimeInstance(DateFormat.SHORT).format(Date(message.receivedAtMs)), style = MaterialTheme.typography.labelSmall)
             val state = when {
                 !message.isLocal -> "received"
-                body.recipientId == null -> "✓ mesh"
+                body.recipientId == null && message.deliveryState == DeliveryState.SEEN -> "Sent · Delivered · Seen"
+                body.recipientId == null && message.deliveryState == DeliveryState.DELIVERED -> "Sent · Delivered"
+                body.recipientId == null -> "Sent"
                 message.deliveryState == DeliveryState.DELIVERED -> "✓✓ delivered"
                 else -> "✓ queued"
             }

@@ -1,6 +1,21 @@
 # Architecture Decision Log
 
-Last updated: 2026-08-16
+Last updated: 2026-08-17
+
+## D-025: Receipt state and durable resend are evidence-backed
+
+- **Status:** Accepted; automated verification passed, physical verification pending
+- **Choice:** A Community message progresses from `Sent` after local Room
+  persistence, to `Delivered` only after the transport confirms hand-off to a
+  direct neighbor, to `Seen` only after a receiver renders the bubble and sends
+  a signed acknowledgement. Locally queued messages are reloaded from Room and
+  re-offered when the coordinator starts.
+- **Why:** Transport submission is not delivery, and background receipt is not
+  human-visible display. Persist-before-send plus UUID dedup makes safe resend
+  possible after process death without inventing success.
+- **Consequence:** Community `Seen` means at least one peer, never the entire
+  changing group. Private delivery still requires its intended recipient's
+  signed ACK. Physical process-kill and three-phone receipt tests remain gates.
 
 ## D-022: Emergency traffic uses structured signed packet types
 

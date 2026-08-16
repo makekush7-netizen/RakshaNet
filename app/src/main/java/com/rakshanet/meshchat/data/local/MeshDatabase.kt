@@ -81,8 +81,17 @@ interface MeshDao {
     @Query("SELECT * FROM peers ORDER BY displayName COLLATE NOCASE ASC")
     fun observePeers(): Flow<List<PeerEntity>>
 
-    @Query("UPDATE messages SET deliveryState = 'DELIVERED' WHERE packetId = :packetId AND isLocal = 1")
+    @Query("UPDATE messages SET deliveryState = 'DELIVERED' WHERE packetId = :packetId AND isLocal = 1 AND recipientId IS NOT NULL")
     suspend fun markDelivered(packetId: String)
+
+    @Query("UPDATE messages SET deliveryState = 'DELIVERED' WHERE packetId = :packetId AND isLocal = 1 AND recipientId IS NULL AND deliveryState = 'QUEUED'")
+    suspend fun markHandedToPeer(packetId: String)
+
+    @Query("UPDATE messages SET deliveryState = 'SEEN' WHERE packetId = :packetId AND isLocal = 1 AND recipientId IS NULL AND type = 'TEXT_MESSAGE'")
+    suspend fun markSeen(packetId: String)
+
+    @Query("SELECT * FROM messages WHERE isLocal = 1 AND deliveryState = 'QUEUED' ORDER BY receivedAtMs ASC, packetId ASC")
+    suspend fun pendingOutbound(): List<MessageEntity>
 
     @Query("DELETE FROM messages WHERE type = 'TEXT_MESSAGE'")
     suspend fun clearMessages()
@@ -149,7 +158,10 @@ class RoomMeshStore(private val database: MeshDatabase) : MeshStore {
     }
 
     override suspend fun upsertPeer(peer: KnownPeer) = database.meshDao().upsertPeer(PeerEntity(peer.peerId, peer.displayName, peer.lastSeenMs, peer.observedHops))
+    override suspend fun markHandedToPeer(packetId: String) = database.meshDao().markHandedToPeer(packetId)
     override suspend fun markDelivered(packetId: String) = database.meshDao().markDelivered(packetId)
+    override suspend fun markSeen(packetId: String) = database.meshDao().markSeen(packetId)
+    override suspend fun pendingOutbound(): List<MeshPacket> = database.meshDao().pendingOutbound().map { it.toStoredMessage().packet }
     override suspend fun clearMessages() = database.meshDao().clearMessages()
 }
 

@@ -1,6 +1,6 @@
 # RakshaNet Full App Progress
 
-Last updated: 2026-08-16
+Last updated: 2026-08-17
 
 ## Current state
 
@@ -19,6 +19,11 @@ Last updated: 2026-08-16
 - Known-peer topology with honest TTL-derived observed-hop hints is implemented.
 - Typed flood gateway, deterministic fake, reviewed templates, and risk-change
   dedup are implemented; the real service remains disabled.
+- Community receipt labels now have distinct evidence: local Room persistence,
+  confirmed direct-neighbor hand-off, and a signed acknowledgement emitted only
+  when a receiving phone renders the message bubble.
+- Locally queued packets are reloaded from Room and safely re-offered to the
+  deduplicating mesh after process restart.
 
 ## Preserved baseline
 
@@ -32,11 +37,11 @@ Last updated: 2026-08-16
 - Phase A is complete.
 - Phases B-G have working implementation and automated evidence, but their
   physical-device/manual exit criteria remain open where noted in the matrix.
-- On 2026-08-16, `:app:testDebugUnitTest :app:assembleDebug :app:lintDebug`
-  passed with 42 JVM tests, a debug APK, and clean lint.
+- On 2026-08-17, `:app:testDebugUnitTest :app:assembleDebug :app:lintDebug`
+  passed with 45 JVM tests, a debug APK, and clean lint.
 - Debug APK SHA-256:
-  `C2040E9CDA1A614BCACDD651BC21A0DB414D291D96B4A23BFCE47A4D9D486E2D`
-  (13,251,665 bytes). Recompute after any source change.
+  `1E22D0B29DE4173ACCEC1C9F885C7AC53E33309048348A9CD50436EA3ED758B7`
+  (13,116,792 bytes). Recompute after any source change.
 - Database schema is version 4 with explicit 1→2→3→4 migrations preserving
   messages/peers while adding course progress and observed-hop state.
 
@@ -50,6 +55,6 @@ Last updated: 2026-08-16
 
 ## Immediate next action
 
-Install the new APK on all three phones and execute F01-F11, then implement the
-remaining hardening work: durable Room outbox/process-death recovery and
-evidence-backed Community delivery/seen receipts.
+Install the new APK on all three phones and execute F01-F11 plus the process-kill
+resend test. Then perform the true out-of-range bridge and 30-minute screen-off
+gates before producing a release-signed APK.

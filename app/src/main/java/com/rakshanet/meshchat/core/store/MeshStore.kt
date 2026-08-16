@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-enum class DeliveryState { QUEUED, DELIVERED }
+enum class DeliveryState { QUEUED, DELIVERED, SEEN }
 
 data class StoredMessage(
     val packet: MeshPacket,
@@ -24,7 +24,11 @@ interface MeshStore {
     val peers: Flow<List<KnownPeer>>
     suspend fun recordIfNew(packetId: String, seenAtMs: Long, message: StoredMessage?): Boolean
     suspend fun upsertPeer(peer: KnownPeer)
+    suspend fun markHandedToPeer(packetId: String)
     suspend fun markDelivered(packetId: String)
+    suspend fun markSeen(packetId: String)
+    /** Locally-authored packets still requiring durable resend after process restart. */
+    suspend fun pendingOutbound(): List<MeshPacket>
     /** Clears this device's visible chat history; seen-packet dedup remains intact. */
     suspend fun clearMessages()
 }
@@ -56,10 +60,40 @@ class InMemoryMeshStore : MeshStore {
         _peers.value = (_peers.value.filterNot { it.peerId == peer.peerId } + peer).sortedBy { it.displayName.lowercase() }
     }
 
+    override suspend fun markHandedToPeer(packetId: String) = mutex.withLock {
+        _messages.value = _messages.value.map {
+            if (it.packet.body.id == packetId && it.isLocal && it.packet.body.recipientId == null && it.deliveryState == DeliveryState.QUEUED) {
+                it.copy(deliveryState = DeliveryState.DELIVERED)
+            } else it
+        }
+        _alerts.value = _alerts.value.map {
+            if (it.packet.body.id == packetId && it.isLocal && it.deliveryState == DeliveryState.QUEUED) {
+                it.copy(deliveryState = DeliveryState.DELIVERED)
+            } else it
+        }
+    }
+
     override suspend fun markDelivered(packetId: String) = mutex.withLock {
         _messages.value = _messages.value.map {
-            if (it.packet.body.id == packetId && it.isLocal) it.copy(deliveryState = DeliveryState.DELIVERED) else it
+            if (it.packet.body.id == packetId && it.isLocal && it.packet.body.recipientId != null) {
+                it.copy(deliveryState = DeliveryState.DELIVERED)
+            } else it
         }
+    }
+
+    override suspend fun markSeen(packetId: String) = mutex.withLock {
+        _messages.value = _messages.value.map {
+            if (it.packet.body.id == packetId && it.isLocal && it.packet.body.recipientId == null) {
+                it.copy(deliveryState = DeliveryState.SEEN)
+            } else it
+        }
+    }
+
+    override suspend fun pendingOutbound(): List<MeshPacket> = mutex.withLock {
+        (_messages.value + _alerts.value)
+            .filter { it.isLocal && it.deliveryState == DeliveryState.QUEUED }
+            .sortedBy { it.receivedAtMs }
+            .map { it.packet }
     }
 
     override suspend fun clearMessages() = mutex.withLock { _messages.value = emptyList() }

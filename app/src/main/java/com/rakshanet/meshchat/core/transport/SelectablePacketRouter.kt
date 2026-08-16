@@ -19,6 +19,7 @@ class SelectablePacketRouter(
 
     override val incomingPackets: Flow<InboundPacket> = merge(mock.incomingPackets, nearby.incomingPackets)
     override val connectionEvents: Flow<Unit> = merge(mock.connectionEvents, nearby.connectionEvents)
+    override val deliveryEvents: Flow<PacketDelivery> = merge(mock.deliveryEvents, nearby.deliveryEvents)
 
     fun useMock() {
         nearby.stop()

@@ -70,6 +70,7 @@ class NearbyPacketRouter(
     private val pendingPayloads = ConcurrentHashMap<Long, SentPacket>()
     private val inbound = MutableSharedFlow<InboundPacket>(extraBufferCapacity = 64)
     private val connections = MutableSharedFlow<Unit>(extraBufferCapacity = 16)
+    private val deliveries = MutableSharedFlow<PacketDelivery>(extraBufferCapacity = 64)
     private val _status = MutableStateFlow("Nearby transport stopped")
     private val _pendingConnection = MutableStateFlow<PendingConnection?>(null)
     private val pendingPrompts = linkedMapOf<String, PendingConnection>()
@@ -83,6 +84,7 @@ class NearbyPacketRouter(
 
     override val incomingPackets: Flow<InboundPacket> = inbound.asSharedFlow()
     override val connectionEvents: Flow<Unit> = connections.asSharedFlow()
+    override val deliveryEvents: Flow<PacketDelivery> = deliveries.asSharedFlow()
     val status = _status.asStateFlow()
     val pendingConnection = _pendingConnection.asStateFlow()
 
@@ -423,7 +425,9 @@ class NearbyPacketRouter(
         override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {
             val sent = pendingPayloads[update.payloadId] ?: return // Ignore incoming transfer updates.
             when (update.status) {
-                PayloadTransferUpdate.Status.SUCCESS -> pendingPayloads.remove(update.payloadId)
+                PayloadTransferUpdate.Status.SUCCESS -> pendingPayloads.remove(update.payloadId)?.let { sent ->
+                    deliveries.tryEmit(PacketDelivery(sent.packet.body.id, endpointId))
+                }
                 PayloadTransferUpdate.Status.FAILURE -> pendingPayloads.remove(update.payloadId)?.let(::retryPayloadSoon)
                 PayloadTransferUpdate.Status.CANCELED -> pendingPayloads.remove(update.payloadId)?.let(::retryPayloadSoon)
                 else -> Unit

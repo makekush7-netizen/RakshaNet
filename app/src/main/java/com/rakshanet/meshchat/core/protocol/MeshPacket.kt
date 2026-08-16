@@ -69,6 +69,7 @@ object PacketRules {
         body.type == PacketType.TEXT_MESSAGE && body.recipientId != null && body.channelId != DIRECT_CHANNEL -> "direct channel is invalid"
         body.type == PacketType.DELIVERY_ACK && body.recipientId.isNullOrBlank() -> "ack recipient is missing"
         body.type == PacketType.DELIVERY_ACK && runCatching { UUID.fromString(body.referencePacketId) }.isFailure -> "ack reference is invalid"
+        body.type == PacketType.DELIVERY_ACK && body.payload !in setOf("delivered", "seen") -> "ack type is invalid"
         body.type in setOf(PacketType.SOS_ALERT, PacketType.SOS_UPDATE, PacketType.GUIDANCE_BROADCAST) && body.recipientId != null -> "alert packets must be community broadcasts"
         body.type in setOf(PacketType.SOS_ALERT, PacketType.SOS_UPDATE, PacketType.GUIDANCE_BROADCAST) && body.channelId != COMMUNITY_CHANNEL -> "alert channel is invalid"
         body.type == PacketType.SOS_ALERT && body.referencePacketId != null -> "initial SOS cannot reference another packet"

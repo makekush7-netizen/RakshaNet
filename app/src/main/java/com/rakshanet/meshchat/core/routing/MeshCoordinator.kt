@@ -42,7 +42,14 @@ class MeshCoordinator(
     fun start() {
         if (jobs.isNotEmpty()) return
         jobs += scope.launch { router.incomingPackets.collect(::handleIncoming) }
-        jobs += scope.launch { router.connectionEvents.collect { announceSelf() } }
+        jobs += scope.launch {
+            router.connectionEvents.collect {
+                announceSelf()
+                resendPending(reportStatus = false)
+            }
+        }
+        jobs += scope.launch { router.deliveryEvents.collect { store.markHandedToPeer(it.packetId) } }
+        jobs += scope.launch { resendPending(reportStatus = true) }
     }
 
     fun stop() {
@@ -53,6 +60,13 @@ class MeshCoordinator(
     suspend fun clearChat() {
         store.clearMessages()
         _status.value = "Chat history cleared on this device"
+    }
+
+    /** Sends the Community "Seen" receipt only when Compose actually displays the message. */
+    suspend fun acknowledgeDisplayed(packet: MeshPacket) {
+        if (packet.body.type != PacketType.TEXT_MESSAGE || packet.body.recipientId != null || packet.body.senderId == localId) return
+        val marker = "$DISPLAY_ACK_MARKER${packet.body.id}"
+        if (store.recordIfNew(marker, now(), null)) sendAck(packet, ACK_SEEN)
     }
 
     suspend fun sendText(payload: String, recipientId: String? = null): Result<MeshPacket> = runCatching {
@@ -116,12 +130,15 @@ class MeshCoordinator(
             }
             PacketType.DELIVERY_ACK -> {
                 if (packet.body.recipientId == localId) {
-                    packet.body.referencePacketId?.let { store.markDelivered(it) }
-                    _status.value = "Private message delivered"
+                    packet.body.referencePacketId?.let { referencedId ->
+                        if (packet.body.payload == ACK_SEEN) store.markSeen(referencedId)
+                        else store.markDelivered(referencedId)
+                    }
+                    _status.value = if (packet.body.payload == ACK_SEEN) "Community message seen by a peer" else "Private message delivered"
                 } else relay(packet, inbound.sourcePeerId)
             }
             PacketType.TEXT_MESSAGE -> {
-                if (packet.body.recipientId == localId) sendAck(packet)
+                if (packet.body.recipientId == localId) sendAck(packet, ACK_DELIVERED)
                 relay(packet, inbound.sourcePeerId)
                 _status.value = if (visible) "Message received from ${packet.body.senderName}" else "Private packet relayed"
             }
@@ -145,10 +162,16 @@ class MeshCoordinator(
         router.sendPacket(packet)
     }
 
-    private suspend fun sendAck(original: MeshPacket) {
+    private suspend fun resendPending(reportStatus: Boolean) {
+        val pending = store.pendingOutbound()
+        pending.forEach { router.sendPacket(it) }
+        if (reportStatus && pending.isNotEmpty()) _status.value = "Restored ${pending.size} pending packet(s)"
+    }
+
+    private suspend fun sendAck(original: MeshPacket, acknowledgement: String) {
         val ack = createPacket(
             type = PacketType.DELIVERY_ACK,
-            payload = "delivered",
+            payload = acknowledgement,
             recipientId = original.body.senderId,
             channelId = PacketRules.DIRECT_CHANNEL,
             referencePacketId = original.body.id,
@@ -186,6 +209,9 @@ class MeshCoordinator(
     }
 
     private companion object {
+        const val ACK_DELIVERED = "delivered"
+        const val ACK_SEEN = "seen"
+        const val DISPLAY_ACK_MARKER = "display-ack:"
         val ALERT_TYPES = setOf(PacketType.SOS_ALERT, PacketType.SOS_UPDATE, PacketType.GUIDANCE_BROADCAST)
     }
 }
