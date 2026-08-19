@@ -90,8 +90,8 @@ Last updated: 2026-08-17
 
 ## Immediate next action
 
-Install the public v0.3.1 APK on the two phones and visually confirm that labels
-are readable on the dark action buttons. Do not rerun unrelated mesh tests.
+Share the unlisted judge documentation URL after the Git/Vercel deployment is
+ready. Physical app testing is not required for this documentation-only change.
 
 ## 2026-08-17 device review and public-release pass
 
@@ -114,3 +114,16 @@ are readable on the dark action buttons. Do not rerun unrelated mesh tests.
   commit `0e2313b`; the homepage rendered successfully and the public APK URL
   returned HTTP 200, Android package content type, and the exact local size of
   21,027,103 bytes. No runtime errors were reported in the first-hour scan.
+
+## 2026-08-20 technical documentation release
+
+- Added an unlisted, `noindex` Next.js route at `/field-notes-2026` for the
+  SmartAlthon judge write-up. It is intentionally technical rather than a
+  duplicate of the presentation: architecture, identity/signing, TTL/dedup,
+  Nearby recovery work, Android 15 permission findings, device evidence,
+  limitations, and reproducibility sources are included.
+- The narrative treats a prediction/disaster-data system as an optional adapter
+  that may inject signed guidance when one device has internet; the offline mesh
+  remains functional without it.
+- `web/npm run build` passed on 2026-08-20. Git-connected Vercel publication
+  is the immediate next action.

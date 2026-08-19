@@ -43,3 +43,5 @@ flow has not been implemented or tested; the user will perform device/UI checks.
 
 Automated full gate on 2026-08-17: 45 JVM tests passed, debug APK assembled,
 and `lintDebug` passed. `PARTIAL` never substitutes for required device evidence.
+
+| V13 | Documentation | Unlisted technical field notes route | PASS | `/field-notes-2026` was added with `noindex` metadata. `web/npm run build` passed on 2026-08-20; Git-connected production publication pending. |

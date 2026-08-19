@@ -415,3 +415,13 @@ Last updated: 2026-08-17
 - Vercel replaces the earlier private ChatGPT/Sites preview configuration.
 - Production deploys are sourced from the original GitHub repository; `web/` is the Vercel root directory.
 - The authority console remains an explicitly labelled, non-operational hackathon mock.
+
+## 2026-08-20 — Judge documentation is an unlisted technical route
+
+- The public Vercel site contains a deliberately unlinked, `noindex` technical
+  write-up at `/field-notes-2026` for hackathon reviewers.
+- It documents observed device evidence separately from untested topology,
+  range, and authority/gateway claims. The route is shareable, not access
+  controlled; a secret-looking URL is convenience, not security.
+- Forecasting or prediction remains a replaceable online adapter that can emit
+  signed guidance into the mesh. It is not a dependency of nearby messaging.
